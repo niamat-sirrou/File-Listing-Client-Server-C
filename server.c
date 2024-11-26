@@ -34,25 +34,25 @@ int main() {
     int addrlen = sizeof(address);
     char buffer[BUFFER_SIZE] = {0};
 
-    // Initialisation de Winsock
+    // Winsock Initialization
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
         printf("Failed. Error Code: %d\n", WSAGetLastError());
         return 1;
     }
 
-    // Création du socket serveur
+    // Create server socket
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
         printf("Socket creation error: %d\n", WSAGetLastError());
         WSACleanup();
         return 1;
     }
 
-    // Configuration de l'adresse du serveur
+    // Configure server address
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
 
-    // Liaison du socket à l'adresse et au port spécifiés
+    // Bind socket to the specified address and port
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) == SOCKET_ERROR) {
         printf("Bind failed with error code: %d\n", WSAGetLastError());
         closesocket(server_fd);
@@ -60,24 +60,24 @@ int main() {
         return 1;
     }
 
-    // Ecoute des connexions entrantes
+    // Listen for incoming connections
     if (listen(server_fd, 3) < 0) {
         printf("Listen failed\n");
         return 1;
     }
     printf("Server listening on port %d\n", PORT);
 
-    // Acceptation des connexions entrantes et traitement des requêtes
+    // Accept incoming connections and process requests
     while (1) {
         if ((new_socket = accept(server_fd, (struct sockaddr *)&address, &addrlen)) == INVALID_SOCKET) {
             printf("Accept failed\n");
             return 1;
         }
 
-        // Traitement de la requête pour lister les fichiers et dossiers
+        // Process the request to list files and directories
         list_files(buffer);
 
-        // Envoi de la liste au client
+        // Send the list to the client
         send(new_socket, buffer, strlen(buffer), 0);
         printf("Files and directories sent to client\n");
 

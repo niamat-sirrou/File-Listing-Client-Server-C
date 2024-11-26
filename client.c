@@ -15,25 +15,25 @@ int main() {
     struct sockaddr_in serv_addr;
     char buffer[BUFFER_SIZE] = {0};
 
-    // Initialisation de Winsock
+    // Winsock Initialization
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
         printf("Failed. Error Code: %d\n", WSAGetLastError());
         return 1;
     }
 
-    // Création du socket client
+    // Create client socket
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
         printf("Socket creation error: %d\n", WSAGetLastError());
         WSACleanup();
         return 1;
     }
 
-    // Configuration de l'adresse du serveur
+    // Configure the server address
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(PORT);
     serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-    // Connexion au serveur
+    // Connect to the server
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         printf("Connection Failed\n");
         closesocket(sock);
@@ -41,7 +41,7 @@ int main() {
         return 1;
     }
 
-    // Réception des données du serveur
+    // Receive data from the server
     recv(sock, buffer, BUFFER_SIZE, 0);
     printf("Files and directories:\n%s\n", buffer);
 
